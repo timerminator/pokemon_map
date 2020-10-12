@@ -1,6 +1,13 @@
 from django.db import models
 
 
+class PokemonElementType(models.Model):
+    title = models.CharField(verbose_name='Стихия', max_length=200)
+
+    def __str__(self):
+        return self.title
+
+
 class Pokemon(models.Model):
     pokemon_id = models.AutoField(primary_key=True)
     title_ru = models.CharField(verbose_name='Название', max_length=200)
@@ -8,6 +15,7 @@ class Pokemon(models.Model):
     title_jp = models.CharField(verbose_name='Название на японском', max_length=200, blank=True, default=None)
     img_url = models.ImageField(verbose_name='Изображение', upload_to='pokemons', blank=True, default=None)
     description = models.TextField(verbose_name='Описание', blank=True, default=None)
+    element_type = models.ManyToManyField(PokemonElementType, default=1, verbose_name='Стихия')
     previous_evolution = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, default = None,
                                            related_name='next_evolution', verbose_name='Предыдущая эволюция',)
 
@@ -29,4 +37,3 @@ class PokemonEntity(models.Model):
 
     def __str__(self):
         return '{} {} уровня'.format(self.pokemon.title_ru, self.level)
-

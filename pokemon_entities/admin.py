@@ -4,3 +4,4 @@ from .models import *
 
 admin.site.register(Pokemon)
 admin.site.register(PokemonEntity)
+admin.site.register(PokemonElementType)
