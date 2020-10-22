@@ -1,7 +1,6 @@
 import folium
 
-from django.http import HttpResponseNotFound
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from .models import Pokemon, PokemonEntity
 
 
@@ -16,6 +15,7 @@ def add_pokemon(folium_map, lat, lon, name, image_url=DEFAULT_IMAGE_URL):
     )
     folium.Marker(
         [lat, lon],
+        popup=name,
         tooltip=name,
         icon=icon,
     ).add_to(folium_map)
@@ -28,9 +28,17 @@ def show_all_pokemons(request):
     for pokemon in pokemons:
         add_pokemon(
             folium_map, pokemon.latitude, pokemon.longitude,
-            pokemon.pokemon.title_ru, request.build_absolute_uri(pokemon.pokemon.img_url.url))
+            pokemon.pokemon.title_en, request.build_absolute_uri(pokemon.pokemon.img_url.url))
 
-    pokemons_on_page = Pokemon.objects.all()
+    pokemon_types = Pokemon.objects.all()
+    pokemons_on_page = []
+    for pokemon in pokemon_types:
+        pokemons_on_page.append({
+            'pokemon_id': pokemon.id,
+            'img_url': pokemon.img_url.url,
+            'title_ru': pokemon.title_ru,
+
+        })
 
     return render(request, "mainpage.html", context={
         'map': folium_map._repr_html_(),
@@ -39,10 +47,10 @@ def show_all_pokemons(request):
 
 
 def show_pokemon(request, pokemon_id):
-    pokemons = PokemonEntity.objects.filter(pokemon=pokemon_id)
-    pokemon = Pokemon.objects.get(pokemon_id=pokemon_id)
+    pokemons = PokemonEntity.objects.filter(pokemon=int(pokemon_id))
+    pokemon = get_object_or_404(Pokemon, id=int(pokemon_id))
     pokemon_on_page = {
-        'pokemon_id': pokemon.pokemon_id,
+        'pokemon_id': pokemon.id,
         'img_url': pokemon.img_url.url,
         'title_ru': pokemon.title_ru,
         'title_en': pokemon.title_en,
