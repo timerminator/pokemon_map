@@ -8,15 +8,21 @@ MOSCOW_CENTER = [55.751244, 37.618423]
 DEFAULT_IMAGE_URL = "https://vignette.wikia.nocookie.net/pokemon/images/6/6e/%21.png/revision/latest/fixed-aspect-ratio-down/width/240/height/240?cb=20130525215832&fill=transparent"
 
 
-def add_pokemon(folium_map, lat, lon, name, image_url=DEFAULT_IMAGE_URL):
+def add_pokemon(folium_map, lat, lon, name, level, strongth, health, defence, stamina, image_url=DEFAULT_IMAGE_URL):
     icon = folium.features.CustomIcon(
         image_url,
         icon_size=(50, 50),
     )
+    popup_text = """    {}
+                    <br>level: {}  
+                    <br>strongth: {}
+                    <br>health: {}
+                    <br>defence: {}
+                    <br>stamina: {}
+    """.format(name, level, strongth, health, defence, stamina)
     folium.Marker(
         [lat, lon],
-        popup=name,
-        tooltip=name,
+        popup=folium.Popup(popup_text, max_width=200),
         icon=icon,
     ).add_to(folium_map)
 
@@ -28,7 +34,8 @@ def show_all_pokemons(request):
     for pokemon in pokemons:
         add_pokemon(
             folium_map, pokemon.latitude, pokemon.longitude,
-            pokemon.pokemon.title_en, request.build_absolute_uri(pokemon.pokemon.img_url.url))
+            pokemon.pokemon.title_en, pokemon.level, pokemon.strongth, pokemon.health, pokemon.defence, pokemon.stamina,
+            request.build_absolute_uri(pokemon.pokemon.img_url.url))
 
     pokemon_types = Pokemon.objects.all()
     pokemons_on_page = []
@@ -63,7 +70,9 @@ def show_pokemon(request, pokemon_id):
     for pokemon_entity in pokemons:
         add_pokemon(
             folium_map, pokemon_entity.latitude, pokemon_entity.longitude,
-            pokemon_entity.pokemon.title_ru, request.build_absolute_uri(pokemon_entity.pokemon.img_url.url))
+            pokemon_entity.pokemon.title_en, pokemon_entity.level, pokemon_entity.strongth,
+            pokemon_entity.health, pokemon_entity.defence, pokemon_entity.stamina,
+            request.build_absolute_uri(pokemon_entity.pokemon.img_url.url))
 
     return render(request, "pokemon.html", context={'map': folium_map._repr_html_(),
                                                     'pokemon': pokemon_on_page})

@@ -13,7 +13,7 @@ class Pokemon(models.Model):
     title_en = models.CharField(verbose_name='Название на английском', max_length=200, blank=True, default='')
     title_jp = models.CharField(verbose_name='Название на японском', max_length=200, blank=True, default='')
     img_url = models.ImageField(verbose_name='Изображение', upload_to='pokemons', blank=True, default=None)
-    description = models.TextField(verbose_name='Описание', blank=True, default='')
+    description = models.TextField(verbose_name='Описание', blank=True)
     element_type = models.ManyToManyField(PokemonElementType, related_name='elements', verbose_name='Стихия')
     previous_evolution = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True,
                                            related_name='next_evolution', verbose_name='Предыдущая эволюция',)
