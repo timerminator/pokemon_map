@@ -10,8 +10,8 @@ class PokemonElementType(models.Model):
 
 class Pokemon(models.Model):
     title_ru = models.CharField(verbose_name='Название', max_length=200)
-    title_en = models.CharField(verbose_name='Название на английском', max_length=200, blank=True, default='')
-    title_jp = models.CharField(verbose_name='Название на японском', max_length=200, blank=True, default='')
+    title_en = models.CharField(verbose_name='Название на английском', max_length=200, blank=True)
+    title_jp = models.CharField(verbose_name='Название на японском', max_length=200, blank=True)
     img_url = models.ImageField(verbose_name='Изображение', upload_to='pokemons', blank=True, default=None)
     description = models.TextField(verbose_name='Описание', blank=True)
     element_type = models.ManyToManyField(PokemonElementType, related_name='elements', verbose_name='Стихия')
