@@ -3,7 +3,7 @@ from django.db import models
 
 class PokemonElementType(models.Model):
     title = models.CharField(verbose_name='Стихия', max_length=200)
-    img_url = models.ImageField(verbose_name='Изображение', upload_to='elements', blank=True, null=True)
+    img_url = models.ImageField(verbose_name='Изображение', upload_to='elements', blank=True, default=None)
 
     def __str__(self):
         return self.title

@@ -56,6 +56,13 @@ def show_all_pokemons(request):
 def show_pokemon(request, pokemon_id):
     pokemons = PokemonEntity.objects.filter(pokemon=int(pokemon_id))
     pokemon = get_object_or_404(Pokemon, id=int(pokemon_id))
+    pokemon_element_types = []
+    if pokemon.element_type.all():
+        for element_type in pokemon.element_type.all():
+            pokemon_element_types.append({
+                'title': element_type.title,
+                'img': element_type.img_url.url,
+            })
     pokemon_on_page = {
         'pokemon_id': pokemon.id,
         'img_url': pokemon.img_url.url,
@@ -65,6 +72,7 @@ def show_pokemon(request, pokemon_id):
         'description': pokemon.description,
         'previous_evolution': pokemon.previous_evolution,
         'next_evolution': pokemon.next_evolution.all().first(),
+        'element_type': pokemon_element_types
     }
     folium_map = folium.Map(location=MOSCOW_CENTER, zoom_start=12)
     for pokemon_entity in pokemons:
